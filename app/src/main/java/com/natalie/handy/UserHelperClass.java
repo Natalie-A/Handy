@@ -2,11 +2,14 @@ package com.natalie.handy;
 public class UserHelperClass {
     String full_name, email_address;
     int phone_number;
+    String password;
 
-    public UserHelperClass(String full_name, String email_address, int phone_number) {
+    public UserHelperClass(String full_name, String email_address, int phone_number, String password) {
         this.full_name = full_name;
         this.email_address = email_address;
         this.phone_number = phone_number;
+        this.password = password;
+
     }
 
     public String getFull_name() {
