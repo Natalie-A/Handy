@@ -29,6 +29,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private CheckBox conditions;
     private long maxId = 0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +134,29 @@ public class RegistrationActivity extends AppCompatActivity {
                 //Check if phone number is unique
                 if (snapshot.getChildrenCount() > 0) {
                     Toast.makeText(RegistrationActivity.this, "Phone number already exists", Toast.LENGTH_SHORT).show();
+                if(snapshot.getValue(String.class) !=null) {
+                    String key = snapshot.getKey();
+                    if (key.equals("Full name")) {
+                        ;
+
+
+                        String full_name = snapshot.getValue(String.class);
+                        et_full_name.setText(full_name);
+                    }
+                    if ( key.equals("Email Address"));{
+                    String email_address =snapshot.getValue(String.class);
+                    et_email_address.setText(email_address);}
+                    if (key.equals("Phone Number"));{
+                    String phone_number = snapshot.getValue(String.class);
+                    et_phone_number.setText(phone_number);}
+                    if (key.equals("Password"));{
+                    String password = snapshot.getValue(String.class);
+                    et_password.setText((password));}
+                }
+
+
+
+
                 } else {
                     //send email link to user
                     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -145,15 +169,15 @@ public class RegistrationActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             //Insert values to database
-                                            UserHelperClass helperClass = new UserHelperClass(full_name, email_address, phone_number);
+                                            UserHelperClass helperClass = new UserHelperClass(full_name, email_address, phone_number,password);
                                             reference.child(String.valueOf(maxId + 1)).setValue(helperClass);
 
-                                            et_full_name.setText("");
-                                            et_email_address.setText("");
-                                            et_phone_number.setText("");
-                                            et_password.setText("");
+                                            et_full_name.setText("Full name");
+                                            et_email_address.setText("Email Address");
+                                            et_phone_number.setText("Phone Number");
+                                            et_password.setText("Password");
 
-                                            Toast register = Toast.makeText(RegistrationActivity.this, "Successful registration", Toast.LENGTH_SHORT);
+                                            Toast register = Toast.makeText(RegistrationActivity.this, "Successful Registration", Toast.LENGTH_SHORT);
                                             register.show();
 
                                             Intent myIntent = new Intent(RegistrationActivity.this, LoginActivity.class);
@@ -174,9 +198,11 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
-        });
-    }
 
+
+        });
+
+    }
     //open sign in activity
     public void sign_in(View view) {
         Intent myIntent = new Intent(this, LoginActivity.class);

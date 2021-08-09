@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
     //Variables
@@ -25,6 +27,10 @@ public class LoginActivity extends AppCompatActivity {
     LayoutInflater inflater;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    private DatabaseReference firstDatabase = databaseReference.child("firsttext");
+    private DatabaseReference secondDatabase = databaseReference.child("secondtext");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
