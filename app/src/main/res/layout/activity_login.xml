@@ -72,26 +72,53 @@
                 android:textColor="@color/dark_grey" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/user_type"
+                android:textColor="@color/dark_grey"
+                android:textSize="15sp" />
+
+            <Spinner
+                android:id="@+id/user_role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_toEndOf="@id/role"
+                android:layout_toRightOf="@id/role"
+                android:background="@color/dark_grey"
+                android:spinnerMode="dropdown" />
+        </RelativeLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginTop="30dp"
+            android:layout_marginEnd="35dp"
             android:layout_marginRight="35dp"
             android:fontFamily="sans-serif-medium"
-            android:text="@string/forgot_password"
             android:onClick="forgot_password"
+            android:text="@string/forgot_password"
             android:textColor="@color/dark_grey"
-            android:textSize="15sp"
-            android:layout_marginEnd="35dp" />
+            android:textSize="15sp" />
 
         <Button
+            android:id="@+id/btn_login"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:background="@drawable/button"
-            android:onClick="login"
             android:text="@string/login"
             android:textColor="@color/black" />
 

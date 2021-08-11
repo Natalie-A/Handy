@@ -33,7 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment2 extends Fragment {
 
     private TextInputEditText full_name, email_address, phone_number, location;
     private FirebaseAuth firebaseAuth;
@@ -50,11 +50,16 @@ public class ProfileFragment extends Fragment {
     // Declare and initialize a private final static int that will serve as our request code
     private final static int GALLERY_REQ = 1;
 
-    private String nameFromDb, locationFromDb, phoneFromDb, profile_url;
+    private String nameFromDb, locationFromDb, phoneFromDb, profile_url, serviceFromDb;
+
+    public ProfileFragment2() {
+        // Required empty public constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         //Hooks
@@ -71,7 +76,7 @@ public class ProfileFragment extends Fragment {
         //We want to set the profile for specific, hence get the user id of the current user and assign it to a string variable
         final String userID = firebaseUser.getUid();
         //Initialize the database reference where you have your registered users and get the specific user reference using the user ID
-        mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("clients").child(userID);
+        mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("handypersons").child(userID);
 
         mDatabaseUser.addValueEventListener(new ValueEventListener() {
             @Override
@@ -80,11 +85,14 @@ public class ProfileFragment extends Fragment {
                 locationFromDb = snapshot.child("location").getValue(String.class);
                 phoneFromDb = snapshot.child("phone_number").getValue(String.class);
                 profile_url = snapshot.child("profilePhoto").getValue(String.class);
+                serviceFromDb = snapshot.child("service_offered").getValue(String.class);
+
                 full_name.setText(nameFromDb);
                 location.setText(locationFromDb);
                 phone_number.setText(phoneFromDb);
                 Picasso.with(getActivity()).load(profile_url).into(imageView);
             }
+
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
             }
@@ -168,6 +176,7 @@ public class ProfileFragment extends Fragment {
             return false;
         }
     }
+
     //override this method to get the profile image set it in the image button view
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

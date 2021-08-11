@@ -111,12 +111,58 @@
                 android:textColor="@color/dark_grey" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:hint="@string/location"
+            android:textColorHint="@color/dark_grey"
+            app:boxStrokeColor="@color/dark_grey"
+            app:boxStrokeWidth="1dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:textColor="@color/dark_grey" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/user_type"
+                android:textColor="@color/dark_grey"
+                android:textSize="15sp" />
+
+            <Spinner
+                android:id="@+id/user_role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/role"
+                android:layout_marginTop="15dp"
+                android:layout_toEndOf="@id/role"
+                android:spinnerMode="dropdown"
+                android:background="@color/dark_grey"
+                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp" />
+        </RelativeLayout>
+
         <CheckBox
             android:id="@+id/conditions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="5dp"
             android:text="@string/accept_terms_and_conditions"
             android:textColor="@color/dark_grey" />
 
@@ -127,7 +173,6 @@
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:background="@drawable/button"
-            android:onClick="register"
             android:text="@string/register"
             android:textColor="@color/black" />
 

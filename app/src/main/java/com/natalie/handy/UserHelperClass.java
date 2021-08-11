@@ -1,15 +1,13 @@
 package com.natalie.handy;
-public class UserHelperClass {
-    String full_name, email_address;
-    int phone_number;
-    String password;
 
-    public UserHelperClass(String full_name, String email_address, int phone_number, String password) {
+public class UserHelperClass {
+    String full_name, email_address, location, phone_number;
+
+    public UserHelperClass(String full_name, String email_address, String location, String phone_number) {
         this.full_name = full_name;
         this.email_address = email_address;
+        this.location = location;
         this.phone_number = phone_number;
-        this.password = password;
-
     }
 
     public String getFull_name() {
@@ -28,11 +26,19 @@ public class UserHelperClass {
         this.email_address = email_address;
     }
 
-    public int getPhone_number() {
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getPhone_number() {
         return phone_number;
     }
 
-    public void setPhone_number(int phone_number) {
+    public void setPhone_number(String phone_number) {
         this.phone_number = phone_number;
     }
 }

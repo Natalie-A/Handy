@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,20 +21,24 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-public class LoginActivity extends AppCompatActivity {
+import org.jetbrains.annotations.NotNull;
+
+public class LoginActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     //Variables
     TextInputEditText et_email_address, et_password;
     AlertDialog.Builder reset_alert;
     LayoutInflater inflater;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+    private Spinner roleSpinner;
+    private String item;
+    private Button btn_login;
 
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = firebaseDatabase.getReference();
-    private DatabaseReference firstDatabase = databaseReference.child("firsttext");
-    private DatabaseReference secondDatabase = databaseReference.child("secondtext");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +50,20 @@ public class LoginActivity extends AppCompatActivity {
 
         reset_alert = new AlertDialog.Builder(this);
         inflater = this.getLayoutInflater();
+
+        btn_login = findViewById(R.id.btn_login);
+        roleSpinner = findViewById(R.id.user_role);
+
+        //fill the spinner with values
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.spinner_label, android.R.layout.simple_spinner_item);
+        //Specify the layout for drop-down menu
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        roleSpinner.setAdapter(adapter);
+
+        //Set an onItemSelectedListener on the spinner object/variable you have created
+        if (roleSpinner != null) {
+            roleSpinner.setOnItemSelectedListener(this);
+        }
     }
 
     private Boolean validateEmail() {
@@ -73,7 +95,28 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
-    public void login(View view) {
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        // Use the method getItemAtPosition() to get the label selected
+        item = adapterView.getItemAtPosition(i).toString();
+        if (item.equals("Client")) {
+            btn_login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    login();
+                }
+            });
+        } else {
+            btn_login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loginHandy();
+                }
+            });
+        }
+    }
+
+    private void loginHandy() {
         if (!validateEmail() || !validatePassword()) {
             return;
         } else {
@@ -84,9 +127,75 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     //if the email has already been verified
                     if (firebaseAuth.getCurrentUser().isEmailVerified()) {
-                        Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
-                        login.show();
-                        startActivity(new Intent(LoginActivity.this, MainActivity2.class));
+                        //startActivity(new Intent(LoginActivity.this, MainActivity2.class));
+                        String currentUserId = firebaseAuth.getCurrentUser().getUid();
+                        Query query = FirebaseDatabase.getInstance().getReference().child("handypersons");
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                if (snapshot.hasChild(currentUserId)) {
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity3.class);
+                                    Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
+                                    login.show();
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                            }
+                        });
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Please verify your email first", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Something to do
+        Toast toast = Toast.makeText(this, "Nothing selected", Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    //login the client
+    public void login() {
+        if (!validateEmail() || !validatePassword()) {
+            return;
+        } else {
+            String email_address = et_email_address.getText().toString().trim();
+            String password = et_password.getText().toString().trim();
+
+            firebaseAuth.signInWithEmailAndPassword(email_address, password).addOnCompleteListener((task) -> {
+                if (task.isSuccessful()) {
+                    //if the email has already been verified
+                    if (firebaseAuth.getCurrentUser().isEmailVerified()) {
+                        //startActivity(new Intent(LoginActivity.this, MainActivity2.class));
+                        String currentUserId = firebaseAuth.getCurrentUser().getUid();
+                        Query query = FirebaseDatabase.getInstance().getReference().child("clients");
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                if (snapshot.hasChild(currentUserId)) {
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity2.class);
+                                    Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
+                                    login.show();
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                            }
+                        });
                     } else {
                         Toast.makeText(LoginActivity.this, "Please verify your email first", Toast.LENGTH_SHORT).show();
                     }
