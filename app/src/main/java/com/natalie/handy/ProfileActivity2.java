@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +32,8 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public class ProfileActivity2 extends AppCompatActivity {
 
     private ImageButton imageButton;
@@ -37,12 +41,18 @@ public class ProfileActivity2 extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private DatabaseReference mDatabaseHandy;
+    private DatabaseReference mDatabaseService;
     //Declare an Instance of the Storage reference where we will upload the photo
     private StorageReference mStorageRef;
     // Declare an Instance of URI for getting the image from our phone, initialize it to null
     private Uri profileImageUri = null;
     // Declare and initialize a private final static int that will serve as our request code
     private final static int GALLERY_REQ = 1;
+    private Spinner serviceSpinner;
+    private ValueEventListener listener;
+    private ArrayList<String> serviceArrayList;
+    private ArrayAdapter<String> adapter;
+    private String serviceKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,13 @@ public class ProfileActivity2 extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         imageButton = findViewById(R.id.post_profile_image2);
         postProfile = findViewById(R.id.btn_profile2);
+        serviceSpinner = findViewById(R.id.service_offered);
+
+        mDatabaseService = FirebaseDatabase.getInstance().getReference().child("services");
+        serviceArrayList = new ArrayList<>();
+        adapter = new ArrayAdapter<String>(ProfileActivity2.this, android.R.layout.simple_spinner_dropdown_item, serviceArrayList);
+        serviceSpinner.setAdapter(adapter);
+        retrieveData();
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -108,15 +125,32 @@ public class ProfileActivity2 extends AppCompatActivity {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if (task.isSuccessful()) {
-                                                                //show a toast to indicate the profile was updated
-                                                                Toast.makeText(ProfileActivity2.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
-                                                                progressDialog.dismiss();
-                                                                Intent intent = new Intent(ProfileActivity2.this, LoginActivity.class);
-                                                                startActivity(intent);
+                                                                String serviceOffered = serviceSpinner.getSelectedItem().toString();
+                                                                mDatabaseHandy.child("serviceOffered").setValue(serviceOffered);
+                                                                mDatabaseService.orderByChild("service_name").equalTo(serviceOffered).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                                        for(DataSnapshot childSnapshot:snapshot.getChildren()){
+                                                                            serviceKey = childSnapshot.getKey();
+                                                                            mDatabaseService.child(serviceKey).child("handypersons").child("handyperson_id").setValue(userID);
+                                                                            //show a toast to indicate the profile was updated
+                                                                            Toast.makeText(ProfileActivity2.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
+                                                                            progressDialog.dismiss();
+                                                                            Intent intent = new Intent(ProfileActivity2.this, IdActivity.class);
+                                                                            startActivity(intent);
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                                                    }
+                                                                });
                                                             }
                                                         }
                                                     });
                                                 }
+
                                                 @Override
                                                 public void onCancelled(@NonNull DatabaseError error) {
                                                 }
@@ -136,6 +170,23 @@ public class ProfileActivity2 extends AppCompatActivity {
                 } else {
                     Toast.makeText(ProfileActivity2.this, "Please select an image", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    private void retrieveData() {
+        listener = mDatabaseService.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    serviceArrayList.add(item.child("service_name").getValue().toString());
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
             }
         });
     }

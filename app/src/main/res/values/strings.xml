@@ -41,6 +41,9 @@
     <string name="update_profile_image">Update profile image</string>
     <string name="add_a_service">Add a service</string>
     <string name="add_service_to_be_offered">Add service to be offered</string>
+    <string name="insert_profile_picture">Insert profile picture</string>
+    <string name="insert_id_photo">Insert Id photo</string>
+    <string name="select_th_service_you_will_offer">Select the service you will offer</string>
     <string-array name="spinner_label">
         <item> Client </item>
         <item> Handyperson </item>

@@ -227,7 +227,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                                                 et_password.setText("");
                                                 et_location.setText("");
 
-                                                Toast register = Toast.makeText(RegistrationActivity.this, "Successful registration"+userRole, Toast.LENGTH_SHORT);
+                                                Toast register = Toast.makeText(RegistrationActivity.this, "Successful registration", Toast.LENGTH_SHORT);
                                                 register.show();
                                                 //open profile activity on successful registration
                                                 Intent myIntent = new Intent(RegistrationActivity.this, ProfileActivity.class);
@@ -299,6 +299,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                                                 //create a child node database reference to attach the user_id to the users node
                                                 UserHelperClass helperClass = new UserHelperClass(full_name, email_address, location, phone_number);
                                                 userDetailsReference.child("handypersons").child(user_id).setValue(helperClass);
+                                                userDetailsReference.child("handypersons").child(user_id).child("accountStatus").setValue("notVerified");
 
                                                 et_full_name.setText("");
                                                 et_email_address.setText("");

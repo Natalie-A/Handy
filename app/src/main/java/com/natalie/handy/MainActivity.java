@@ -11,12 +11,19 @@ import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 public class MainActivity extends AppCompatActivity {
     Handler handler;
@@ -28,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //Check if internet connection is available
-
         if (!isNetworkAvailable() == true) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -51,8 +57,27 @@ public class MainActivity extends AppCompatActivity {
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     //if the user has not logged out
                     if (firebaseUser != null) {
-                        Intent i = new Intent(MainActivity.this, MainActivity2.class);
-                        startActivity(i);
+                        String currentUserId = firebaseAuth.getCurrentUser().getUid();
+                        Query query = FirebaseDatabase.getInstance().getReference().child("handypersons");
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                //if the user is a handyperson
+                                if (snapshot.hasChild(currentUserId)) {
+                                    Intent i = new Intent(MainActivity.this, MainActivity3.class);
+                                    startActivity(i);
+                                }//if the user is a client
+                                else {
+                                    Intent i = new Intent(MainActivity.this, MainActivity2.class);
+                                    startActivity(i);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
                     } else {
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         //when the user clicks back button in login page,it does not go back to profile page
@@ -64,21 +89,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 900);
         }
-
     }
 
     public boolean isNetworkAvailable() {
-
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         if (connectivityManager != null) {
-
-
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
                 if (capabilities != null) {
                     if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-
                         return true;
                     } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
 
@@ -90,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
         return false;
-
     }
 }

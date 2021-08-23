@@ -105,7 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="@string/phone_number"
+                android:hint="@string/location"
                 android:textColorHint="@color/dark_grey"
                 app:boxStrokeColor="@color/dark_grey"
                 app:boxStrokeWidth="1dp">
@@ -121,29 +121,6 @@
                     android:text="Syokimau"
                     android:textColor="@color/dark_grey" />
             </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:hint="@string/add_service_to_be_offered"
-                android:textColorHint="@color/dark_grey"
-                app:boxStrokeColor="@color/dark_grey"
-                app:boxStrokeWidth="1dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/service_offered"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_add"
-                    android:drawableLeft="@drawable/ic_add"
-                    android:drawablePadding="20dp"
-                    android:inputType="textCapSentences"
-                    android:text=""
-                    android:textColor="@color/dark_grey" />
-            </com.google.android.material.textfield.TextInputLayout>
-
 
             <Button
                 android:id="@+id/btn_update"

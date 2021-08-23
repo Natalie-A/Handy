@@ -127,17 +127,21 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                 if (task.isSuccessful()) {
                     //if the email has already been verified
                     if (firebaseAuth.getCurrentUser().isEmailVerified()) {
-                        //startActivity(new Intent(LoginActivity.this, MainActivity2.class));
                         String currentUserId = firebaseAuth.getCurrentUser().getUid();
                         Query query = FirebaseDatabase.getInstance().getReference().child("handypersons");
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                 if (snapshot.hasChild(currentUserId)) {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity3.class);
-                                    Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
-                                    login.show();
-                                    startActivity(intent);
+                                    //check if account has been verified
+                                    if (snapshot.child(currentUserId).child("accountStatus").getValue(String.class).equals("notVerified")) {
+                                        Toast.makeText(LoginActivity.this, "Please wait for your account to be verified", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity3.class);
+                                        Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
+                                        login.show();
+                                        startActivity(intent);
+                                    }
                                 } else {
                                     Toast.makeText(LoginActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
                                 }

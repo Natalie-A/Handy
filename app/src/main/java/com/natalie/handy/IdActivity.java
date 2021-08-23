@@ -1,17 +1,19 @@
 package com.natalie.handy;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,39 +32,41 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ProfileActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
-    private ImageButton imageButton;
-    private Button postProfile;
+public class IdActivity extends AppCompatActivity {
+
+    private ImageButton idButton;
+    private Button postId;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private DatabaseReference mDatabaseClient;
+    private DatabaseReference mDatabaseHandy;
     //Declare an Instance of the Storage reference where we will upload the photo
     private StorageReference mStorageRef;
     // Declare an Instance of URI for getting the image from our phone, initialize it to null
-    private Uri profileImageUri = null;
+    private Uri idImageUri = null;
     // Declare and initialize a private final static int that will serve as our request code
     private final static int GALLERY_REQ = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_id);
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        imageButton = findViewById(R.id.post_profile_image);
-        postProfile = findViewById(R.id.btn_profile);
+        idButton = findViewById(R.id.post_id_image);
+        postId = findViewById(R.id.btn_submitId);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         //We want to set the profile for specific, hence get the user id of the current user and assign it to a string variable
         final String userID = firebaseUser.getUid();
         //Initialize the database reference where you have your registered users and get the specific user reference using the user ID
-        mDatabaseClient = FirebaseDatabase.getInstance().getReference().child("clients").child(userID);
+        mDatabaseHandy = FirebaseDatabase.getInstance().getReference().child("handypersons").child(userID);
         //Initialize the firebase storage reference where you will store the profile photo images
-        mStorageRef = FirebaseStorage.getInstance().getReference().child("profile_images");
+        mStorageRef = FirebaseStorage.getInstance().getReference().child("id_images");
         //set on click listener on the image button so as to allow users to pick their profile photo from their gallery
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        idButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // create an implicit intent for getting the images
@@ -73,23 +77,24 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, GALLERY_REQ);
             }
         });
+
         //on clicking the images we want to get the the profile photo,
         // then later save this on a database reference for a specific user
-        postProfile.setOnClickListener(new View.OnClickListener() {
+        postId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //validate to ensure that the profile image are not null
-                if (profileImageUri != null) {
-                    //create Storage reference node, inside profile_image storage reference where you will save the profile image
-                    StorageReference profileImagePath = mStorageRef.child(profileImageUri.getLastPathSegment());
+                if(idImageUri!=null){
+                    //create Storage reference node, inside id_image storage reference where you will save the id image
+                    StorageReference idImagePath = mStorageRef.child(idImageUri.getLastPathSegment());
                     //call the putFile() method passing the profile image the user set on the storage reference where you are uploading the image
                     //further call addOnSuccessListener on the reference to listen if the upload task was successful,and get a snapshot of the task
-                    profileImagePath.putFile(profileImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    idImagePath.putFile(idImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             //if the upload of the profile image was successful get the download url
-                            if (taskSnapshot.getMetadata() != null) {
-                                if (taskSnapshot.getMetadata().getReference() != null) {
+                            if(taskSnapshot.getMetadata()!=null){
+                                if(taskSnapshot.getMetadata().getReference()!=null){
                                     //get the download url from your storage, use the methods getStorage() and getDownloadUrl()
                                     Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
                                     //call the method addOnSuccessListener to determine if we got the download url
@@ -97,30 +102,32 @@ public class ProfileActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             //convert the uri to a string on success
-                                            final String profileImage = uri.toString();
+                                            final String idImage = uri.toString();
                                             // call the method push() to add values on the database reference of a specific user
-                                            mDatabaseClient.push();
-                                            mDatabaseClient.addValueEventListener(new ValueEventListener() {
+                                            mDatabaseHandy.push();
+                                            mDatabaseHandy.addValueEventListener(new ValueEventListener() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                                     //add the profilePhoto for the current user
-                                                    mDatabaseClient.child("profilePhoto").setValue(profileImage).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    mDatabaseHandy.child("idPhoto").setValue(idImage).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (task.isSuccessful()) {
+                                                        public void onComplete(@NonNull @NotNull Task<Void> task) {
+                                                            if(task.isSuccessful()){
                                                                 //show a toast to indicate the profile was updated
-                                                                Toast.makeText(ProfileActivity.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(IdActivity.this, "Image Inserted", Toast.LENGTH_SHORT).show();
                                                                 progressDialog.dismiss();
-                                                                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                                                                Intent intent = new Intent(IdActivity.this, LoginActivity.class);
+                                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                                 startActivity(intent);
-                                                                finish();
                                                             }
                                                         }
                                                     });
                                                 }
 
                                                 @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
                                                 }
                                             });
                                         }
@@ -135,8 +142,8 @@ public class ProfileActivity extends AppCompatActivity {
                             progressDialog.show();
                         }
                     });
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Please select an image", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(IdActivity.this, "Please select an image", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -147,9 +154,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_REQ && resultCode == Activity.RESULT_OK) {
             //get the image selected by the user
-            profileImageUri = data.getData();
+            idImageUri = data.getData();
             //set in the image button view
-            imageButton.setImageURI(profileImageUri);
+            idButton.setImageURI(idImageUri);
         }
     }
 }
