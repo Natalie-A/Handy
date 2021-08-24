@@ -23,7 +23,7 @@
                 android:id="@+id/profile_image"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:scaleType="center"
+                android:scaleType="centerInside"
                 android:src="@drawable/add_profile" />
 
         </RelativeLayout>

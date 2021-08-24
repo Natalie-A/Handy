@@ -5,17 +5,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,46 +28,37 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
-public class ProfileActivity2 extends AppCompatActivity {
+public class UpdateProfileFragment2 extends Fragment {
 
-    private ImageButton imageButton;
-    private Button postProfile;
+    private ImageButton updateProfile;
+    private Button save, cancel;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private DatabaseReference mDatabaseHandy;
-    private DatabaseReference mDatabaseService;
     //Declare an Instance of the Storage reference where we will upload the photo
     private StorageReference mStorageRef;
     // Declare an Instance of URI for getting the image from our phone, initialize it to null
     private Uri profileImageUri = null;
     // Declare and initialize a private final static int that will serve as our request code
     private final static int GALLERY_REQ = 1;
-    private Spinner serviceSpinner;
-    private ValueEventListener listener;
-    private ArrayList<String> serviceArrayList;
-    private ArrayAdapter<String> adapter;
-    private String serviceKey;
+    private String profile_url;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile2);
-
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        imageButton = findViewById(R.id.post_profile_image2);
-        postProfile = findViewById(R.id.btn_profile2);
-        serviceSpinner = findViewById(R.id.service_offered);
-
-        mDatabaseService = FirebaseDatabase.getInstance().getReference().child("services");
-        serviceArrayList = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(ProfileActivity2.this, android.R.layout.simple_spinner_dropdown_item, serviceArrayList);
-        serviceSpinner.setAdapter(adapter);
-        retrieveData();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_update_profile2, container, false);
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        //Hooks
+        updateProfile = (ImageButton) view.findViewById(R.id.update_photo2);
+        save = (Button) view.findViewById(R.id.btn_save2);
+        cancel = (Button) view.findViewById(R.id.btn_cancel2);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -76,12 +66,24 @@ public class ProfileActivity2 extends AppCompatActivity {
         final String userID = firebaseUser.getUid();
         //Initialize the database reference where you have your registered users and get the specific user reference using the user ID
         mDatabaseHandy = FirebaseDatabase.getInstance().getReference().child("handypersons").child(userID);
+        mDatabaseHandy.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                profile_url = snapshot.child("profilePhoto").getValue(String.class);
+                Picasso.with(getActivity()).load(profile_url).into(updateProfile);
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
         //Initialize the firebase storage reference where you will store the profile photo images
         mStorageRef = FirebaseStorage.getInstance().getReference().child("profile_images");
         //set on click listener on the image button so as to allow users to pick their profile photo from their gallery
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 // create an implicit intent for getting the images
                 Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 //set the type to images only
@@ -90,9 +92,7 @@ public class ProfileActivity2 extends AppCompatActivity {
                 startActivityForResult(galleryIntent, GALLERY_REQ);
             }
         });
-        //on clicking the images we want to get the the profile photo,
-        // then later save this on a database reference for a specific user
-        postProfile.setOnClickListener(new View.OnClickListener() {
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //validate to ensure that the profile image are not null
@@ -117,36 +117,20 @@ public class ProfileActivity2 extends AppCompatActivity {
                                             final String profileImage = uri.toString();
                                             // call the method push() to add values on the database reference of a specific user
                                             mDatabaseHandy.push();
-                                            mDatabaseHandy.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabaseHandy.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                                     //add the profilePhoto for the current user
-                                                    mDatabaseHandy.child("profilePhoto").setValue(profileImage).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    HashMap hashMap = new HashMap();
+                                                    hashMap.put("profilePhoto", profileImage);
+                                                    mDatabaseHandy.updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                                         @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (task.isSuccessful()) {
-                                                                String serviceOffered = serviceSpinner.getSelectedItem().toString();
-                                                                mDatabaseHandy.child("serviceOffered").setValue(serviceOffered);
-                                                                mDatabaseService.orderByChild("service_name").equalTo(serviceOffered).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                    @Override
-                                                                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                                                                            serviceKey = childSnapshot.getKey();
-                                                                            mDatabaseService.child(serviceKey).child("handypersons").child("handyperson_id").setValue(userID);
-                                                                            //show a toast to indicate the profile was updated
-                                                                            Toast.makeText(ProfileActivity2.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
-                                                                            progressDialog.dismiss();
-                                                                            Intent intent = new Intent(ProfileActivity2.this, IdActivity.class);
-                                                                            startActivity(intent);
-                                                                        }
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                                                                    }
-                                                                });
-                                                            }
+                                                        public void onSuccess(Object o) {
+                                                            //show a toast to indicate the profile was updated
+                                                            Toast.makeText(getContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
+                                                            progressDialog.dismiss();
+                                                            Intent intent = new Intent(getActivity(), MainActivity3.class);
+                                                            startActivity(intent);
                                                         }
                                                     });
                                                 }
@@ -169,27 +153,18 @@ public class ProfileActivity2 extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(ProfileActivity2.this, "Please select an image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Please select an image", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    private void retrieveData() {
-        listener = mDatabaseService.addValueEventListener(new ValueEventListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                for (DataSnapshot item : snapshot.getChildren()) {
-                    serviceArrayList.add(item.child("service_name").getValue().toString());
-                }
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MainActivity3.class);
+                startActivity(intent);
             }
         });
+        return view;
     }
 
     //override this method to get the profile image set it in the image button view
@@ -200,7 +175,7 @@ public class ProfileActivity2 extends AppCompatActivity {
             //get the image selected by the user
             profileImageUri = data.getData();
             //set in the image button view
-            imageButton.setImageURI(profileImageUri);
+            updateProfile.setImageURI(profileImageUri);
         }
     }
 }

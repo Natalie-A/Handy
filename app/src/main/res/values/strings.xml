@@ -33,7 +33,7 @@
     <string name="location">Location</string>
     <string name="choose_your_service">Choose Your service</string>
     <string name="requests">Requests</string>
-    <string name="done">Done</string>
+    <string name="done">Save</string>
     <string name="delete_account">Delete account</string>
     <string name="service_name">Service name</string>
     <string name="service_offered">Service Offered</string>
@@ -44,6 +44,9 @@
     <string name="insert_profile_picture">Insert profile picture</string>
     <string name="insert_id_photo">Insert Id photo</string>
     <string name="select_th_service_you_will_offer">Select the service you will offer</string>
+    <string name="request_service">Request service</string>
+    <string name="ongoing_requests">Ongoing requests</string>
+    <string name="cancel">Cancel</string>
     <string-array name="spinner_label">
         <item> Client </item>
         <item> Handyperson </item>

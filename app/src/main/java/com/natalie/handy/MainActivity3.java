@@ -37,7 +37,7 @@ public class MainActivity3 extends AppCompatActivity implements NavigationView.O
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace
                     (R.id.fragment_container2, new RequestsFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_profile2);
+            navigationView.setCheckedItem(R.id.nav_requests);
         }
     }
 
@@ -73,6 +73,10 @@ public class MainActivity3 extends AppCompatActivity implements NavigationView.O
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
+                break;
+            case R.id.nav_profileImage:
+                getSupportFragmentManager().beginTransaction().replace
+                        (R.id.fragment_container2, new UpdateProfileFragment2()).commit();
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);

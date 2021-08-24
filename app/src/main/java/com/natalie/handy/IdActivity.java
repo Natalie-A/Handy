@@ -1,19 +1,17 @@
 package com.natalie.handy;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,8 +29,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 
 public class IdActivity extends AppCompatActivity {
 
@@ -84,7 +80,7 @@ public class IdActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //validate to ensure that the profile image are not null
-                if(idImageUri!=null){
+                if (idImageUri != null) {
                     //create Storage reference node, inside id_image storage reference where you will save the id image
                     StorageReference idImagePath = mStorageRef.child(idImageUri.getLastPathSegment());
                     //call the putFile() method passing the profile image the user set on the storage reference where you are uploading the image
@@ -93,8 +89,8 @@ public class IdActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             //if the upload of the profile image was successful get the download url
-                            if(taskSnapshot.getMetadata()!=null){
-                                if(taskSnapshot.getMetadata().getReference()!=null){
+                            if (taskSnapshot.getMetadata() != null) {
+                                if (taskSnapshot.getMetadata().getReference() != null) {
                                     //get the download url from your storage, use the methods getStorage() and getDownloadUrl()
                                     Task<Uri> result = taskSnapshot.getStorage().getDownloadUrl();
                                     //call the method addOnSuccessListener to determine if we got the download url
@@ -105,14 +101,14 @@ public class IdActivity extends AppCompatActivity {
                                             final String idImage = uri.toString();
                                             // call the method push() to add values on the database reference of a specific user
                                             mDatabaseHandy.push();
-                                            mDatabaseHandy.addValueEventListener(new ValueEventListener() {
+                                            mDatabaseHandy.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                                     //add the profilePhoto for the current user
                                                     mDatabaseHandy.child("idPhoto").setValue(idImage).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
+                                                            if (task.isSuccessful()) {
                                                                 //show a toast to indicate the profile was updated
                                                                 Toast.makeText(IdActivity.this, "Image Inserted", Toast.LENGTH_SHORT).show();
                                                                 progressDialog.dismiss();
@@ -142,12 +138,13 @@ public class IdActivity extends AppCompatActivity {
                             progressDialog.show();
                         }
                     });
-                }else{
+                } else {
                     Toast.makeText(IdActivity.this, "Please select an image", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
     //override this method to get the profile image set it in the image button view
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

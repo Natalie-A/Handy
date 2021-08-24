@@ -8,9 +8,9 @@
             android:icon="@drawable/ic_person"
             android:title="@string/profile_details" />
         <item
-            android:id="@+id/nav_service"
-            android:icon="@drawable/ic_add"
-            android:title="@string/add_service_offered" />
+            android:id="@+id/nav_profileImage"
+            android:icon="@drawable/ic_profile_image"
+            android:title="@string/update_profile_image"/>
         <item
             android:id="@+id/nav_requests"
             android:icon="@drawable/ic_services"
