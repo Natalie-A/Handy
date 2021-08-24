@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Handy</string>
+    <string name="welcome_back">Welcome back!</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login">Login</string>
+    <string name="new_user_sign_up">New User? Sign Up</string>
+    <string name="register">Register</string>
+    <string name="welcome">Welcome</string>
+    <string name="full_name">Full Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="already_a_user_sign_in">Already a user?Sign In</string>
+    <string name="company_logo">Company Logo</string>
+    <string name="verify_phone_no">Verify Phone No</string>
+    <string name="enter_verification_code_if_not_automatically_authenticated">Enter verification code if not automatically authenticated.</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="verify">Verify</string>
+    <string name="update">Update</string>
+    <string name="accept_terms_and_conditions">Accept Terms and conditions</string>
+    <string name="services">Services</string>
+    <string name="profile_details">Profile details</string>
+    <string name="history_of_requests">History of requests</string>
+    <string name="logout">Logout</string>
+    <string name="user_profile">user_profile</string>
+    <string name="natalie_aoya">Natalie Aoya</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="choose_profile_picture">Choose Profile Picture</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="user_type">User Type</string>
+    <string name="location">Location</string>
+    <string name="choose_your_service">Choose Your service</string>
+    <string name="requests">Requests</string>
+    <string name="done">Save</string>
+    <string name="delete_account">Delete account</string>
+    <string name="service_name">Service name</string>
+    <string name="service_offered">Service Offered</string>
+    <string name="add_service_offered">Add service offered</string>
+    <string name="update_profile_image">Update profile image</string>
+    <string name="add_a_service">Add a service</string>
+    <string name="add_service_to_be_offered">Add service to be offered</string>
+    <string name="insert_profile_picture">Insert profile picture</string>
+    <string name="insert_id_photo">Insert Id photo</string>
+    <string name="select_th_service_you_will_offer">Select the service you will offer</string>
+    <string name="request_service">Request service</string>
+    <string name="ongoing_requests">Ongoing requests</string>
+    <string name="cancel">Cancel</string>
+    <string-array name="spinner_label">
+        <item> Client </item>
+        <item> Handyperson </item>
+    </string-array>
+</resources>

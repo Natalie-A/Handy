@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".IdActivity">
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/insert_id_photo"
+        android:textSize="20sp"
+        android:textColor="@color/dark_grey"/>
+
+    <ImageButton
+        android:id="@+id/post_id_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_below="@id/description"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/add_profile" />
+
+    <Button
+        android:id="@+id/btn_submitId"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_id_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button"
+        android:text="@string/done" />
+
+</RelativeLayout>

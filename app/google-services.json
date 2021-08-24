@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "328840163585",
+    "firebase_url": "https://handy-c4241-default-rtdb.firebaseio.com",
+    "project_id": "handy-c4241",
+    "storage_bucket": "handy-c4241.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328840163585:android:751644b2c66ba67d4bab00",
+        "android_client_info": {
+          "package_name": "com.natalie.handy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328840163585-vbgos8krkm2836oo689ck792fgvb0f0d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwEMxAz2jb2qqHHSZlozO41NjeyhvH-MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "328840163585-vbgos8krkm2836oo689ck792fgvb0f0d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,2 +1,2 @@
 # Handy
-Cs-Project 1
+This is a handyperson-requesting application.
