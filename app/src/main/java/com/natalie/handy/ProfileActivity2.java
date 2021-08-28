@@ -132,7 +132,7 @@ public class ProfileActivity2 extends AppCompatActivity {
                                                                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                                                         for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                                                                             serviceKey = childSnapshot.getKey();
-                                                                            mDatabaseService.child(serviceKey).child("handypersons").child("handyperson_id").setValue(userID);
+                                                                            mDatabaseService.child(serviceKey).child("handypersons").child(userID).setValue("true");
                                                                             //show a toast to indicate the profile was updated
                                                                             Toast.makeText(ProfileActivity2.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
                                                                             progressDialog.dismiss();

@@ -10,7 +10,11 @@
         <item
             android:id="@+id/nav_profileImage"
             android:icon="@drawable/ic_profile_image"
-            android:title="@string/update_profile_image"/>
+            android:title="@string/update_profile_image" />
+        <item
+            android:id="@+id/nav_ongoing2"
+            android:icon="@drawable/ic_ongoing"
+            android:title="@string/ongoing_requests" />
         <item
             android:id="@+id/nav_requests"
             android:icon="@drawable/ic_services"

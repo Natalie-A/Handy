@@ -76,10 +76,12 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                         (R.id.fragment_container, new HistoryFragment()).commit();
                 break;
             case R.id.nav_profileImage:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new UpdateProfileFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace
+                        (R.id.fragment_container, new UpdateProfileFragment()).commit();
                 break;
             case R.id.nav_ongoing:
-                //open ongoing requests fragment
+                getSupportFragmentManager().beginTransaction().replace
+                        (R.id.fragment_container, new OnGoingRequestsFragment()).commit();
                 break;
         }
         drawer.closeDrawer(GravityCompat.START);
