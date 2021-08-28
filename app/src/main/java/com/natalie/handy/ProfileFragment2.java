@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,9 +40,12 @@ import org.jetbrains.annotations.NotNull;
 public class ProfileFragment2 extends Fragment {
 
     private TextInputEditText full_name, email_address, phone_number, location;
+    private TextView rating;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private Button reset_password, update_button, delete_button;
+    private RatingBar rating_score;
+    private Float ratingScore;
     private ImageView imageView;
     private AlertDialog.Builder reset_alert;
     //Declare an Instance of the database reference where we will be saving the profile photo and custom display name
@@ -63,7 +68,7 @@ public class ProfileFragment2 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile2, container, false);
         //Hooks
         full_name = (TextInputEditText) view.findViewById(R.id.full_name);
         email_address = (TextInputEditText) view.findViewById(R.id.email);
@@ -72,6 +77,8 @@ public class ProfileFragment2 extends Fragment {
         imageView = (ImageView) view.findViewById(R.id.profile_image);
         update_button = (Button) view.findViewById(R.id.btn_update);
         delete_button = (Button) view.findViewById(R.id.btn_delete);
+        rating_score = (RatingBar) view.findViewById(R.id.rating_score);
+        rating = (TextView) view.findViewById(R.id.rating);
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -89,10 +96,13 @@ public class ProfileFragment2 extends Fragment {
                 phoneFromDb = snapshot.child("phone_number").getValue(String.class);
                 profile_url = snapshot.child("profilePhoto").getValue(String.class);
                 serviceFromDb = snapshot.child("service_offered").getValue(String.class);
+                ratingScore = snapshot.child("rating_score").getValue(Float.class);
 
                 full_name.setText(nameFromDb);
                 location.setText(locationFromDb);
                 phone_number.setText(phoneFromDb);
+                rating_score.setRating(ratingScore);
+                rating.setText("Rating Score:  " + ratingScore.toString());
                 Picasso.with(getActivity()).load(profile_url).into(imageView);
             }
 

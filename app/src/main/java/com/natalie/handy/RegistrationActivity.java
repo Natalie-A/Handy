@@ -300,6 +300,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                                                 UserHelperClass helperClass = new UserHelperClass(full_name, email_address, location, phone_number);
                                                 userDetailsReference.child("handypersons").child(user_id).setValue(helperClass);
                                                 userDetailsReference.child("handypersons").child(user_id).child("accountStatus").setValue("notVerified");
+                                                userDetailsReference.child("handypersons").child(user_id).child("rating_score").setValue(0.0);
 
                                                 et_full_name.setText("");
                                                 et_email_address.setText("");

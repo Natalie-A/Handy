@@ -22,52 +22,51 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class HistoryFragment extends Fragment {
+public class OnGoingRequestsFragment2 extends Fragment {
 
-    private DatabaseReference mDatabaseRequests, mDatabaseHandypersons;
+    private DatabaseReference mDatabaseRequests, mDatabaseClients;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private String handypersonID, clientID, requestDate, name, requestStatus;
+    private String handypersonID, clientID, requestDate, name;
     private RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    private ArrayList<HistoryRequest> historyRequestArrayList;
-    private HistoryAdapter historyAdapter;
+    private ArrayList<OngoingRequest> ongoingRequestArrayList;
+    private OngoingRequestAdapter ongoingRequestAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_on_going_requests2, container, false);
 
         //initialize
-        recyclerView = view.findViewById(R.id.historyRecyclerView);
+        recyclerView = view.findViewById(R.id.ongoingRequest);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        historyRequestArrayList = new ArrayList<>();
+        ongoingRequestArrayList = new ArrayList<>();
 
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
-        clientID = firebaseUser.getUid();
+        handypersonID = firebaseUser.getUid();
         mDatabaseRequests = FirebaseDatabase.getInstance().getReference().child("requests");
-        mDatabaseHandypersons = FirebaseDatabase.getInstance().getReference().child("handypersons");
-        mDatabaseRequests.orderByChild("clientId").equalTo(clientID).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseClients = FirebaseDatabase.getInstance().getReference().child("clients");
+        mDatabaseRequests.orderByChild("handymanId").equalTo(handypersonID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if (ds.child("status").getValue(String.class).equals("Completed")||ds.child("status").getValue(String.class).equals("Cancelled")||ds.child("status").getValue(String.class).equals("Rejected")) {
-                        handypersonID = ds.child("handymanId").getValue().toString();
-                        mDatabaseHandypersons.child(handypersonID).addValueEventListener(new ValueEventListener() {
+                    if (ds.child("status").getValue(String.class).equals("Accepted")){
+                        clientID = ds.child("clientId").getValue().toString();
+                        mDatabaseClients.child(clientID).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                 name = snapshot.child("full_name").getValue().toString();
                                 requestDate = ds.child("requestDate").getValue().toString();
-                                requestStatus = ds.child("status").getValue().toString();
-                                HistoryRequest historyRequest = new HistoryRequest(name, requestDate, requestStatus);
-                                historyRequestArrayList.add(historyRequest);
-                                historyAdapter = new HistoryAdapter(getContext(), historyRequestArrayList);
-                                recyclerView.setAdapter(historyAdapter);
+                                OngoingRequest ongoingRequest = new OngoingRequest(name,requestDate);
+                                ongoingRequestArrayList.add(ongoingRequest);
+                                ongoingRequestAdapter = new OngoingRequestAdapter(getContext(), ongoingRequestArrayList);
+                                recyclerView.setAdapter(ongoingRequestAdapter);
                             }
 
                             @Override
