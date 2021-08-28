@@ -100,27 +100,18 @@ public class ProfileActivity extends AppCompatActivity {
                                             final String profileImage = uri.toString();
                                             // call the method push() to add values on the database reference of a specific user
                                             mDatabaseClient.push();
-                                            mDatabaseClient.addValueEventListener(new ValueEventListener() {
+                                            //add the profilePhoto for the current user
+                                            mDatabaseClient.child("profilePhoto").setValue(profileImage).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    //add the profilePhoto for the current user
-                                                    mDatabaseClient.child("profilePhoto").setValue(profileImage).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if (task.isSuccessful()) {
-                                                                //show a toast to indicate the profile was updated
-                                                                Toast.makeText(ProfileActivity.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
-                                                                progressDialog.dismiss();
-                                                                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-                                                                startActivity(intent);
-                                                                finish();
-                                                            }
-                                                        }
-                                                    });
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        //show a toast to indicate the profile was updated
+                                                        Toast.makeText(ProfileActivity.this, "Profile Inserted", Toast.LENGTH_SHORT).show();
+                                                        progressDialog.dismiss();
+                                                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
                                                 }
                                             });
                                         }

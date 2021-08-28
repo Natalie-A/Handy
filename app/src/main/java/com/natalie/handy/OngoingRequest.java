@@ -2,26 +2,28 @@ package com.natalie.handy;
 
 public class OngoingRequest {
 
-    private String name, date;
+    private String name, date, clientLocation, clientPhoneNumber;
 
-    public OngoingRequest(String name, String date) {
+    public OngoingRequest(String name, String date, String clientLocation, String clientPhoneNumber) {
         this.name = name;
         this.date = date;
+        this.clientLocation = clientLocation;
+        this.clientPhoneNumber = clientPhoneNumber;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getClientLocation() {
+        return clientLocation;
+    }
+
+    public String getClientPhoneNumber() {
+        return clientPhoneNumber;
     }
 }

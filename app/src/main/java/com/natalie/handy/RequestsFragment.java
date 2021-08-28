@@ -1,5 +1,6 @@
 package com.natalie.handy;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,9 @@ public class RequestsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        final ProgressDialog Dialog = new ProgressDialog(getContext());
+        Dialog.setMessage("Loading...");
+        Dialog.show();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_requests, container, false);
 
@@ -57,11 +61,16 @@ public class RequestsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
+                    if(snapshot.getChildrenCount()==0||!ds.child("status").getValue(String.class).equals("waitingForAccept")){
+                        Dialog.dismiss();
+                        Toast.makeText(getActivity(),"You have no upcoming requests",Toast.LENGTH_SHORT).show();
+                    }
                     if (ds.child("status").getValue(String.class).equals("waitingForAccept")){
                         clientID = ds.child("clientId").getValue().toString();
                         mDatabaseClients.child(clientID).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                Dialog.dismiss();
                                 name = snapshot.child("full_name").getValue().toString();
                                 requestDate = ds.child("requestDate").getValue().toString();
                                 WaitingRequests waitingRequests = new WaitingRequests(name, requestDate);

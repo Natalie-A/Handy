@@ -1,6 +1,7 @@
 package com.natalie.handy;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -37,6 +38,8 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 public class ProfileFragment2 extends Fragment {
 
     private TextInputEditText full_name, email_address, phone_number, location;
@@ -66,7 +69,9 @@ public class ProfileFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        final ProgressDialog Dialog = new ProgressDialog(getContext());
+        Dialog.setMessage("Loading...");
+        Dialog.show();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile2, container, false);
         //Hooks
@@ -97,7 +102,7 @@ public class ProfileFragment2 extends Fragment {
                 profile_url = snapshot.child("profilePhoto").getValue(String.class);
                 serviceFromDb = snapshot.child("service_offered").getValue(String.class);
                 ratingScore = snapshot.child("rating_score").getValue(Float.class);
-
+                Dialog.dismiss();
                 full_name.setText(nameFromDb);
                 location.setText(locationFromDb);
                 phone_number.setText(phoneFromDb);
@@ -164,19 +169,16 @@ public class ProfileFragment2 extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //this is where we delete the user
-                        mDatabaseUser.removeValue();
-                        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("accountStatus", "disabled");
+                        mDatabaseUser.updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                             @Override
-                            public void onComplete(@NonNull @NotNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                }
+                            public void onSuccess(Object o) {
+                                Toast.makeText(getActivity(), "Account deleted", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
                             }
                         });
                     }

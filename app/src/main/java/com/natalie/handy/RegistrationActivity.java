@@ -220,6 +220,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                                                 //create a child node database reference to attach the user_id to the users node
                                                 UserHelperClass helperClass = new UserHelperClass(full_name, email_address, location, phone_number);
                                                 userDetailsReference.child("clients").child(user_id).setValue(helperClass);
+                                                userDetailsReference.child("clients").child(user_id).child("accountStatus").setValue("enabled");
 
                                                 et_full_name.setText("");
                                                 et_email_address.setText("");

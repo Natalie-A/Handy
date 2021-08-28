@@ -1,6 +1,10 @@
 package com.natalie.handy;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +65,20 @@ public class OngoingRequestAdapter extends RecyclerView.Adapter<OngoingRequestAd
         final OngoingRequest ongoingRequest = arr.get(position);
         holder.nameTextView.setText(ongoingRequest.getName());
         holder.dateTextView.setText(ongoingRequest.getDate());
+        holder.clientLocation.setText(ongoingRequest.getClientLocation());
+        holder.btnCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Uri phoneUri = Uri.parse("tel:" + ongoingRequest.getClientPhoneNumber());
+                Intent intent = new Intent(Intent.ACTION_DIAL, phoneUri);
+                try {
+                    context.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Log.d("ImplicitIntents", "Can't handle this intent!");
+                }
+            }
+        });
 
         mDatabaseClients.orderByChild("full_name").equalTo(ongoingRequest.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -70,7 +88,7 @@ public class OngoingRequestAdapter extends RecyclerView.Adapter<OngoingRequestAd
                     mDatabaseRequests.orderByChild("clientId").equalTo(clientId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                            for(DataSnapshot snapshot1: snapshot.getChildren()){
+                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                                 String requestId = snapshot1.getKey();
                                 holder.btnCancel.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -114,14 +132,16 @@ public class OngoingRequestAdapter extends RecyclerView.Adapter<OngoingRequestAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView nameTextView, dateTextView;
-        private Button btnCancel;
+        private TextView nameTextView, dateTextView, clientLocation;
+        private Button btnCancel, btnCall;
 
         public MyViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             nameTextView = (TextView) itemView.findViewById(R.id.name);
             dateTextView = (TextView) itemView.findViewById(R.id.requestDate2);
             btnCancel = (Button) itemView.findViewById(R.id.btn_cancel);
+            clientLocation = (TextView) itemView.findViewById(R.id.clientLocation);
+            btnCall = (Button) itemView.findViewById(R.id.btn_call_client);
         }
     }
 }

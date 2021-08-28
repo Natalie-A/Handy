@@ -73,4 +73,5 @@
     <string name="name">Name</string>
     <string name="job_completed">Job completed</string>
     <string name="completed">Completed</string>
+    <string name="client_location">Client location</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.natalie.handy;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,9 @@ public class ServicesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        final ProgressDialog Dialog = new ProgressDialog(getContext());
+        Dialog.setMessage("Loading...");
+        Dialog.show();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_services, container, false);
         //init
@@ -44,6 +48,7 @@ public class ServicesFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot item : snapshot.getChildren()) {
+                    Dialog.dismiss();
                     //serviceArrayList.add(new Service(item.child("service_name").getValue().toString()));
                     Service service = new Service(item.child("service_name").getValue().toString());
                     serviceArrayList.add(service);

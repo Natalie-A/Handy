@@ -136,12 +136,13 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                                     //check if account has been verified
                                     if (snapshot.child(currentUserId).child("accountStatus").getValue(String.class).equals("notVerified")) {
                                         Toast.makeText(LoginActivity.this, "Please wait for your account to be verified", Toast.LENGTH_SHORT).show();
-                                    } else {
+                                    } else if (snapshot.child(currentUserId).child("accountStatus").getValue(String.class).equals("enabled")) {
                                         Intent intent = new Intent(LoginActivity.this, MainActivity3.class);
                                         Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
                                         login.show();
                                         startActivity(intent);
-                                    }
+                                    } else
+                                        Toast.makeText(LoginActivity.this, "Your account has been disabled", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(LoginActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
                                 }
@@ -187,10 +188,13 @@ public class LoginActivity extends AppCompatActivity implements AdapterView.OnIt
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                 if (snapshot.hasChild(currentUserId)) {
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity2.class);
-                                    Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
-                                    login.show();
-                                    startActivity(intent);
+                                    if (snapshot.child(currentUserId).child("accountStatus").getValue(String.class).equals("enabled")) {
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity2.class);
+                                        Toast login = Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT);
+                                        login.show();
+                                        startActivity(intent);
+                                    } else
+                                        Toast.makeText(LoginActivity.this, "Your account has been disabled", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(LoginActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
                                 }

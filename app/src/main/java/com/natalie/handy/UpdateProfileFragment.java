@@ -118,27 +118,17 @@ public class UpdateProfileFragment extends Fragment {
                                             final String profileImage = uri.toString();
                                             // call the method push() to add values on the database reference of a specific user
                                             mDatabaseClient.push();
-                                            mDatabaseClient.addValueEventListener(new ValueEventListener() {
+                                            //add the profilePhoto for the current user
+                                            HashMap hashMap = new HashMap();
+                                            hashMap.put("profilePhoto", profileImage);
+                                            mDatabaseClient.updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                                 @Override
-                                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                                    //add the profilePhoto for the current user
-                                                    HashMap hashMap = new HashMap();
-                                                    hashMap.put("profilePhoto", profileImage);
-                                                    mDatabaseClient.updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
-                                                        @Override
-                                                        public void onSuccess(Object o) {
-                                                            //show a toast to indicate the profile was updated
-                                                            Toast.makeText(getContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
-                                                            progressDialog.dismiss();
-                                                            Intent intent = new Intent(getActivity(), MainActivity3.class);
-                                                            startActivity(intent);
-                                                        }
-                                                    });
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
+                                                public void onSuccess(Object o) {
+                                                    //show a toast to indicate the profile was updated
+                                                    Toast.makeText(getContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
+                                                    progressDialog.dismiss();
+                                                    Intent intent = new Intent(getActivity(), MainActivity2.class);
+                                                    startActivity(intent);
                                                 }
                                             });
                                         }
