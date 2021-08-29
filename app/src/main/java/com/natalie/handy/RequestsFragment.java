@@ -60,12 +60,12 @@ public class RequestsFragment extends Fragment {
         mDatabaseRequests.orderByChild("handymanId").equalTo(handypersonID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if (snapshot.getChildrenCount() == 0) {
+                    Dialog.dismiss();
+                    Toast.makeText(getContext(), "You have no requests", Toast.LENGTH_SHORT).show();
+                }
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if(snapshot.getChildrenCount()==0||!ds.child("status").getValue(String.class).equals("waitingForAccept")){
-                        Dialog.dismiss();
-                        Toast.makeText(getActivity(),"You have no upcoming requests",Toast.LENGTH_SHORT).show();
-                    }
-                    if (ds.child("status").getValue(String.class).equals("waitingForAccept")){
+                    if (ds.child("status").getValue(String.class).equals("waitingForAccept")) {
                         clientID = ds.child("clientId").getValue().toString();
                         mDatabaseClients.child(clientID).addValueEventListener(new ValueEventListener() {
                             @Override
@@ -84,6 +84,8 @@ public class RequestsFragment extends Fragment {
 
                             }
                         });
+                    }else{
+                        Dialog.dismiss();
                     }
                 }
             }

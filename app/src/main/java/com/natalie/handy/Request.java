@@ -1,13 +1,14 @@
 package com.natalie.handy;
 
 public class Request {
-    String clientId, handymanId, status, requestDate;
+    String clientId, handymanId, status, requestDate,client_handyman_status;
 
-    public Request(String clientId, String handymanId, String status, String requestDate) {
+    public Request(String clientId, String handymanId, String status, String requestDate, String client_handyman_status) {
         this.clientId = clientId;
         this.handymanId = handymanId;
         this.status = status;
         this.requestDate = requestDate;
+        this.client_handyman_status = client_handyman_status;
     }
 
     public String getClientId() {
@@ -24,5 +25,9 @@ public class Request {
 
     public String getRequestDate() {
         return requestDate;
+    }
+
+    public String getClient_handyman_status() {
+        return client_handyman_status;
     }
 }

@@ -1,7 +1,6 @@
 package com.natalie.handy;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,7 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
     private DatabaseReference mDatabaseRequests, mDatabaseClients;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private String handymanID;
+    private String handymanID, clientId;
 
     Context context;
     ArrayList<WaitingRequests> arr;
@@ -62,26 +61,26 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
         final WaitingRequests waitingRequests = arr.get(position);
         holder.nameTextView.setText(waitingRequests.getClientName());
         holder.dateTextView.setText(waitingRequests.getRequestDate());
-
         mDatabaseClients.orderByChild("full_name").equalTo(waitingRequests.getClientName()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String clientId = dataSnapshot.getKey();
-                    mDatabaseRequests.orderByChild("clientId").equalTo(clientId).addListenerForSingleValueEvent(new ValueEventListener() {
+                for (DataSnapshot client : snapshot.getChildren()) {
+                    holder.btnAccept.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                            for(DataSnapshot snapshot1: snapshot.getChildren()){
-                                String requestId = snapshot1.getKey();
-                                holder.btnAccept.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
+                        public void onClick(View v) {
+                            clientId = client.getKey();
+                            //use client id and handyman id to get the request id
+                            mDatabaseRequests.orderByChild("client_handyman_status").equalTo(clientId + "_" + handymanID+"_waitingForAccept").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
                                         HashMap hashMap = new HashMap();
                                         hashMap.put("status", "Accepted");
-                                        mDatabaseRequests.child(requestId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                        mDatabaseRequests.child(ds.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                             @Override
                                             public void onSuccess(Object o) {
                                                 //show a toast to indicate the request was accepted
+                                                mDatabaseRequests.child(ds.getKey()).child("client_handyman_status").setValue(clientId+"_"+handymanID+"_accepted");
                                                 Toast.makeText(v.getContext(), "Request Updated", Toast.LENGTH_SHORT).show();
                                                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
                                                 Fragment myFragment = new OnGoingRequestsFragment2();
@@ -89,15 +88,30 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
                                             }
                                         });
                                     }
-                                });
-                                holder.btnReject.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    });
+                    holder.btnReject.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            clientId = client.getKey();
+                            //use client id and handyman id to get the request id
+                            mDatabaseRequests.orderByChild("client_handyman_status").equalTo(clientId + "_" + handymanID+"_waitingForAccept").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
                                         HashMap hashMap = new HashMap();
                                         hashMap.put("status", "Rejected");
-                                        mDatabaseRequests.child(requestId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                        mDatabaseRequests.child(ds.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                             @Override
                                             public void onSuccess(Object o) {
+                                                mDatabaseRequests.child(ds.getKey()).child("client_handyman_status").setValue(clientId+"_"+handymanID+"_rejected");
                                                 //show a toast to indicate the request was accepted
                                                 Toast.makeText(v.getContext(), "Request Updated", Toast.LENGTH_SHORT).show();
                                                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
@@ -106,13 +120,13 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
                                             }
                                         });
                                     }
-                                });
-                            }
-                        }
+                                }
 
-                        @Override
-                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                @Override
+                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
+                                }
+                            });
                         }
                     });
                 }

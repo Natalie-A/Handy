@@ -137,7 +137,7 @@ public class RequestActivity extends AppCompatActivity {
                     Toast.makeText(RequestActivity.this, "Please select the date", Toast.LENGTH_SHORT).show();
                 } else {
                     //insert values into db
-                    Request request = new Request(clientID, user_id, "waitingForAccept", request_date);
+                    Request request = new Request(clientID, user_id, "waitingForAccept", request_date,clientID+"_"+user_id+"_waitingForAccept");
                     mDatabaseRequests.push().setValue(request);
                     Toast.makeText(RequestActivity.this, "Request was made successfully", Toast.LENGTH_SHORT).show();
                     Intent open = new Intent(RequestActivity.this, MainActivity2.class);

@@ -64,11 +64,11 @@ public class HistoryFragment2 extends Fragment {
         mDatabaseRequests.orderByChild("handymanId").equalTo(handypersonID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if(snapshot.getChildrenCount()==0){
+                    Dialog.dismiss();
+                    Toast.makeText(getContext(),"You have no history of requests",Toast.LENGTH_SHORT).show();
+                }
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if(snapshot.getChildrenCount()==0||ds.child("status").getValue(String.class).equals("Accepted")||ds.child("status").getValue(String.class).equals("waitingForAccept")){
-                        Dialog.dismiss();
-                        Toast.makeText(getActivity(),"You have no requests history",Toast.LENGTH_SHORT).show();
-                    }
                     if (ds.child("status").getValue(String.class).equals("Completed")||ds.child("status").getValue(String.class).equals("Cancelled")||ds.child("status").getValue(String.class).equals("Rejected")) {
                         clientID = ds.child("clientId").getValue().toString();
                         mDatabaseClients.child(clientID).addValueEventListener(new ValueEventListener() {
@@ -89,6 +89,8 @@ public class HistoryFragment2 extends Fragment {
 
                             }
                         });
+                    }else{
+                        Dialog.dismiss();
                     }
                 }
             }
