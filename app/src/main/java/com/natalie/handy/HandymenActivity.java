@@ -58,13 +58,15 @@ public class HandymenActivity extends AppCompatActivity {
                             mDatabaseHandy.child(user_id).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                    String name = snapshot.child("full_name").getValue().toString();
-                                    String location = snapshot.child("location").getValue().toString();
-                                    Float rating = snapshot.child("rating_score").getValue(Float.class);
-                                    Handyman handyman = new Handyman(name, location,rating.toString());
-                                    handymenArrayList.add(handyman);
-                                    handymanRecyclerViewAdapter = new HandymanRecyclerViewAdapter(HandymenActivity.this, handymenArrayList);
-                                    recyclerView.setAdapter(handymanRecyclerViewAdapter);
+                                    if(snapshot.child("accountStatus").getValue(String.class).equals("enabled")){
+                                        String name = snapshot.child("full_name").getValue().toString();
+                                        String location = snapshot.child("location").getValue().toString();
+                                        Float rating = snapshot.child("rating_score").getValue(Float.class);
+                                        Handyman handyman = new Handyman(name, location, rating.toString());
+                                        handymenArrayList.add(handyman);
+                                        handymanRecyclerViewAdapter = new HandymanRecyclerViewAdapter(HandymenActivity.this, handymenArrayList);
+                                        recyclerView.setAdapter(handymanRecyclerViewAdapter);
+                                    }
                                 }
 
                                 @Override
