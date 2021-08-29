@@ -35,7 +35,7 @@ public class OngoingRequestAdapter extends RecyclerView.Adapter<OngoingRequestAd
     private DatabaseReference mDatabaseRequests, mDatabaseClients;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
-    private String handymanID;
+    private String handymanID, clientId;
 
     Context context;
     ArrayList<OngoingRequest> arr;
@@ -84,35 +84,36 @@ public class OngoingRequestAdapter extends RecyclerView.Adapter<OngoingRequestAd
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String clientId = dataSnapshot.getKey();
-                    mDatabaseRequests.orderByChild("clientId").equalTo(clientId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    holder.btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                String requestId = snapshot1.getKey();
-                                holder.btnCancel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
+                        public void onClick(View v) {
+                            clientId = dataSnapshot.getKey();
+                            //use client id and handyman id to get the request id
+                            mDatabaseRequests.orderByChild("client_handyman_status").equalTo(clientId + "_" + handymanID + "_accepted").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
                                         HashMap hashMap = new HashMap();
                                         hashMap.put("status", "Cancelled");
-                                        mDatabaseRequests.child(requestId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                        mDatabaseRequests.child(ds.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                             @Override
                                             public void onSuccess(Object o) {
                                                 //show a toast to indicate the request was accepted
+                                                mDatabaseRequests.child(ds.getKey()).child("client_handyman_status").setValue(clientId + "_" + handymanID + "_cancelled");
                                                 Toast.makeText(v.getContext(), "Request Updated", Toast.LENGTH_SHORT).show();
                                                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                                                Fragment myFragment = new OnGoingRequestsFragment2();
+                                                Fragment myFragment = new HistoryFragment2();
                                                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container2, myFragment).addToBackStack(null).commit();
                                             }
                                         });
                                     }
-                                });
-                            }
-                        }
+                                }
 
-                        @Override
-                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                @Override
+                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
+                                }
+                            });
                         }
                     });
                 }

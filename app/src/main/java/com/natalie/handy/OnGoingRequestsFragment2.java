@@ -61,7 +61,7 @@ public class OnGoingRequestsFragment2 extends Fragment {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if(snapshot.getChildrenCount()==0||!ds.child("status").getValue(String.class).equals("Accepted")){
+                    if(snapshot.getChildrenCount()==0){
                         Dialog.dismiss();
                         Toast.makeText(getActivity(),"You have no requests",Toast.LENGTH_SHORT).show();
                     }
@@ -86,6 +86,8 @@ public class OnGoingRequestsFragment2 extends Fragment {
 
                             }
                         });
+                    }else{
+                        Dialog.dismiss();
                     }
                 }
             }

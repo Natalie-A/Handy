@@ -61,7 +61,7 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if(snapshot.getChildrenCount()==0||ds.child("status").getValue(String.class).equals("Accepted")||ds.child("status").getValue(String.class).equals("waitingForAccept")){
+                    if(snapshot.getChildrenCount()==0){
                         Dialog.dismiss();
                         Toast.makeText(getActivity(),"You have no requests history",Toast.LENGTH_SHORT).show();
                     }
@@ -85,6 +85,8 @@ public class HistoryFragment extends Fragment {
 
                             }
                         });
+                    }else{
+                        Dialog.dismiss();
                     }
                 }
             }

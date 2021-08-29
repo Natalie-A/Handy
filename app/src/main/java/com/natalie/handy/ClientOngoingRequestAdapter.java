@@ -2,7 +2,6 @@ package com.natalie.handy;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ public class ClientOngoingRequestAdapter extends RecyclerView.Adapter<ClientOngo
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private AlertDialog.Builder rating_alert;
-    private String clientID;
+    private String clientID, handymanID;
     private Float sumRatings = Float.valueOf(0), totalRatings, avgRatings;
 
     Context context;
@@ -74,37 +73,54 @@ public class ClientOngoingRequestAdapter extends RecyclerView.Adapter<ClientOngo
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String handymanId = dataSnapshot.getKey();
-                    mDatabaseRequests.orderByChild("handymanId").equalTo(handymanId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    holder.btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                                String requestId = snapshot1.getKey();
-                                holder.btnCancel.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
+                        public void onClick(View v) {
+                            handymanID = dataSnapshot.getKey();
+                            //use client id and handyman id to get the request id
+                            mDatabaseRequests.orderByChild("client_handyman_status").equalTo(clientID + "_" + handymanID + "_accepted").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
                                         HashMap hashMap = new HashMap();
                                         hashMap.put("status", "Cancelled");
-                                        mDatabaseRequests.child(requestId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                        mDatabaseRequests.child(ds.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                             @Override
                                             public void onSuccess(Object o) {
                                                 //show a toast to indicate the request was accepted
+                                                mDatabaseRequests.child(ds.getKey()).child("client_handyman_status").setValue(clientID + "_" + handymanID + "_cancelled");
                                                 Toast.makeText(v.getContext(), "Request Updated", Toast.LENGTH_SHORT).show();
                                                 AppCompatActivity activity = (AppCompatActivity) v.getContext();
-                                                Fragment myFragment = new OnGoingRequestsFragment();
+                                                Fragment myFragment = new HistoryFragment();
                                                 activity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container2, myFragment).addToBackStack(null).commit();
                                             }
                                         });
                                     }
-                                });
-                                holder.btnComplete.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    });
+                    holder.btnComplete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handymanID = dataSnapshot.getKey();
+                            //use client id and handyman id to get the request id
+                            mDatabaseRequests.orderByChild("client_handyman_status").equalTo(clientID + "_" + handymanID + "_accepted").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                    for (DataSnapshot ds : snapshot.getChildren()) {
                                         HashMap hashMap = new HashMap();
                                         hashMap.put("status", "Completed");
-                                        mDatabaseRequests.child(requestId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                        mDatabaseRequests.child(ds.getKey()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                             @Override
                                             public void onSuccess(Object o) {
+                                                //show a toast to indicate the request was accepted
+                                                mDatabaseRequests.child(ds.getKey()).child("client_handyman_status").setValue(clientID + "_" + handymanID + "_completed");
                                                 //open dialog and send rating score to ratings table
                                                 View pop = LayoutInflater.from(context).inflate(R.layout.rating_pop, null);
                                                 //start alert dialog
@@ -114,7 +130,7 @@ public class ClientOngoingRequestAdapter extends RecyclerView.Adapter<ClientOngo
                                                         //validate the email address
                                                         RatingBar bar = pop.findViewById(R.id.rating_bar);
                                                         //insert rating score to database and update handypersons rating score**
-                                                        mDatabaseRatings.orderByChild("handymanId").equalTo(handymanId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        mDatabaseRatings.orderByChild("handymanId").equalTo(handymanID).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                                                 if (snapshot.getChildrenCount() == 0) {
@@ -131,7 +147,7 @@ public class ClientOngoingRequestAdapter extends RecyclerView.Adapter<ClientOngo
                                                                 }
                                                                 HashMap hashMap = new HashMap();
                                                                 hashMap.put("rating_score", avgRatings);
-                                                                mDatabaseHandypersons.child(handymanId).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
+                                                                mDatabaseHandypersons.child(handymanID).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener() {
                                                                     @Override
                                                                     public void onSuccess(Object o) {
                                                                         AppCompatActivity activity = (AppCompatActivity) v.getContext();
@@ -147,20 +163,20 @@ public class ClientOngoingRequestAdapter extends RecyclerView.Adapter<ClientOngo
 
                                                             }
                                                         });
-                                                        Ratings ratings = new Ratings(clientID,handymanId,String.valueOf(bar.getRating()),requestId);
+                                                        Ratings ratings = new Ratings(clientID, handymanID, String.valueOf(bar.getRating()), ds.getKey());
                                                         mDatabaseRatings.push().setValue(ratings);
                                                     }
                                                 }).setNegativeButton("Cancel", null).setView(pop).create().show();
                                             }
                                         });
                                     }
-                                });
-                            }
-                        }
+                                }
 
-                        @Override
-                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                                @Override
+                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
+                                }
+                            });
                         }
                     });
                 }

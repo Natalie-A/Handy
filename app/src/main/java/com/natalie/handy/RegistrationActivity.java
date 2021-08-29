@@ -7,7 +7,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -32,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 public class RegistrationActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     //Variables
     private EditText et_full_name, et_email_address, et_phone_number, et_password, et_location;
-    private CheckBox conditions;
     private Spinner roleSpinner;
     private String item, userRole;
     private Button btn_register;
@@ -55,7 +53,6 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
         et_phone_number = findViewById(R.id.phone);
         et_password = findViewById(R.id.password);
         et_location = findViewById(R.id.location);
-        conditions = findViewById(R.id.conditions);
         btn_register = findViewById(R.id.register);
         roleSpinner = findViewById(R.id.user_role);
 
@@ -180,11 +177,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
     //register client into the database
     public void register(String role) {
 
-        if (!conditions.isChecked()) {
-            Toast condition = Toast.makeText(RegistrationActivity.this, "Please Accept Terms and Conditions", Toast.LENGTH_SHORT);
-            condition.show();
-            return;
-        } else if (!validateName() || !validateEmail() || !validatePhone() || !validatePassword() || !validateLocation()) {
+        if (!validateName() || !validateEmail() || !validatePhone() || !validatePassword() || !validateLocation()) {
             return;
         }
         //Get all the values from the edit texts
@@ -232,7 +225,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                                                 register.show();
                                                 //open profile activity on successful registration
                                                 Intent myIntent = new Intent(RegistrationActivity.this, ProfileActivity.class);
-                                                myIntent.putExtra("user_role",userRole);
+                                                myIntent.putExtra("user_role", userRole);
                                                 startActivity(myIntent);
                                             } else {
                                                 Toast.makeText(RegistrationActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -252,19 +245,17 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
+
     //register handyperson into the database
     public void registerHandy(String role) {
 
-        if (!conditions.isChecked()) {
-            Toast condition = Toast.makeText(RegistrationActivity.this, "Please Accept Terms and Conditions", Toast.LENGTH_SHORT);
-            condition.show();
-            return;
-        } else if (!validateName() || !validateEmail() || !validatePhone() || !validatePassword() || !validateLocation()) {
+        if (!validateName() || !validateEmail() || !validatePhone() || !validatePassword() || !validateLocation()) {
             return;
         }
         //Get all the values from the edit texts
@@ -313,7 +304,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                                                 register.show();
                                                 //open profile activity on successful registration
                                                 Intent myIntent = new Intent(RegistrationActivity.this, ProfileActivity2.class);
-                                                myIntent.putExtra("user_role",userRole);
+                                                myIntent.putExtra("user_role", userRole);
                                                 startActivity(myIntent);
                                             } else {
                                                 Toast.makeText(RegistrationActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -333,6 +324,7 @@ public class RegistrationActivity extends AppCompatActivity implements AdapterVi
                     });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }

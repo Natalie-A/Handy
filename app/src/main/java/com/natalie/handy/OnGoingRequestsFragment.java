@@ -60,9 +60,9 @@ public class OnGoingRequestsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    if(snapshot.getChildrenCount()==0||!ds.child("status").getValue(String.class).equals("Accepted")){
+                    if(snapshot.getChildrenCount()==0){
                         Dialog.dismiss();
-                        Toast.makeText(getActivity(),"You have no accepted requests",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"You have not made any requests requests",Toast.LENGTH_SHORT).show();
                     }
                     if (ds.child("status").getValue(String.class).equals("Accepted")){
                         handypersonID = ds.child("handymanId").getValue().toString();
@@ -85,6 +85,8 @@ public class OnGoingRequestsFragment extends Fragment {
 
                             }
                         });
+                    }else{
+                        Dialog.dismiss();
                     }
                 }
             }
