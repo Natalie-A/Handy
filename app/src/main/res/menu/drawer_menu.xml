@@ -16,6 +16,10 @@
             android:icon="@drawable/ic_services"
             android:title="@string/request_service" />
         <item
+            android:id="@+id/nav_pending"
+            android:icon="@drawable/ic_pending"
+            android:title="@string/pending_requests"/>
+        <item
             android:id="@+id/nav_ongoing"
             android:icon="@drawable/ic_ongoing"
             android:title="@string/ongoing_requests"/>

@@ -61,6 +61,7 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
         final WaitingRequests waitingRequests = arr.get(position);
         holder.nameTextView.setText(waitingRequests.getClientName());
         holder.dateTextView.setText(waitingRequests.getRequestDate());
+        holder.locationTextView.setText(waitingRequests.getClientLocation());
         mDatabaseClients.orderByChild("full_name").equalTo(waitingRequests.getClientName()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -146,7 +147,7 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView nameTextView, dateTextView;
+        private TextView nameTextView, dateTextView, locationTextView;
         private Button btnAccept, btnReject;
 
         public MyViewHolder(@NonNull @NotNull View itemView) {
@@ -155,6 +156,7 @@ public class WaitingRequestsRecyclerViewAdapter extends RecyclerView.Adapter<Wai
             dateTextView = (TextView) itemView.findViewById(R.id.requestDate);
             btnAccept = (Button) itemView.findViewById(R.id.btn_accept);
             btnReject = (Button) itemView.findViewById(R.id.btn_reject);
+            locationTextView = (TextView) itemView.findViewById(R.id.client_location);
         }
     }
 }

@@ -83,6 +83,10 @@ public class MainActivity2 extends AppCompatActivity implements NavigationView.O
                 getSupportFragmentManager().beginTransaction().replace
                         (R.id.fragment_container, new OnGoingRequestsFragment()).commit();
                 break;
+            case R.id.nav_pending:
+                getSupportFragmentManager().beginTransaction().replace
+                        (R.id.fragment_container, new PendingRequestsFragment()).commit();
+                break;
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
