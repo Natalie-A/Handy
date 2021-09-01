@@ -1,2 +1,2 @@
 # Handy
-This is a handyperson-requesting application.
+A Mobile Application for Users to Request Handyperson Services in Residences
